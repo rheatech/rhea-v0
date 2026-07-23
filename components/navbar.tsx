@@ -1,17 +1,20 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 
 const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Works", href: "#works" },
-  { label: "Contact", href: "#contact" },
+  { label: "Services", href: "/services" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ]
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,14 +23,6 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
-
-  const scrollToSection = (href: string) => {
-    setIsMenuOpen(false)
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
-    }
-  }
 
   return (
     <>
@@ -41,29 +36,24 @@ export function Navbar() {
       >
         <nav className="flex items-center justify-between px-6 py-4 my-0 md:px-12 md:py-5">
           {/* Logo */}
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              window.scrollTo({ top: 0, behavior: "smooth" })
-            }}
-            className="group flex items-center"
-          >
+          <Link href="/" className="group flex items-center">
             <img src="/rhea-logo.png" alt="Rhea" className="h-6 md:h-7 w-auto opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <ul className="hidden md:flex items-center gap-8">
             {navLinks.map((link, index) => (
               <li key={link.label}>
-                <button
-                  onClick={() => scrollToSection(link.href)}
-                  className="group relative font-mono text-xs tracking-wider text-muted-foreground hover:text-foreground transition-colors duration-300"
+                <Link
+                  href={link.href}
+                  className={`group relative font-mono text-xs tracking-wider transition-colors duration-300 ${
+                    pathname === link.href ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
                   <span className="text-accent mr-1">0{index + 1}</span>
                   {link.label.toUpperCase()}
                   <span className="absolute -bottom-1 left-0 w-0 h-px bg-foreground group-hover:w-full transition-all duration-300" />
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
@@ -111,18 +101,22 @@ export function Navbar() {
           >
             <nav className="flex flex-col items-center justify-center h-full gap-8">
               {navLinks.map((link, index) => (
-                <motion.button
+                <motion.div
                   key={link.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ delay: index * 0.1 }}
-                  onClick={() => scrollToSection(link.href)}
-                  className="group text-4xl font-sans tracking-tight text-foreground"
+                  onClick={() => setIsMenuOpen(false)}
                 >
-                  <span className="text-accent font-mono text-sm mr-2">0{index + 1}</span>
-                  {link.label}
-                </motion.button>
+                  <Link
+                    href={link.href}
+                    className="group text-4xl font-sans tracking-tight text-foreground"
+                  >
+                    <span className="text-accent font-mono text-sm mr-2">0{index + 1}</span>
+                    {link.label}
+                  </Link>
+                </motion.div>
               ))}
               <motion.div
                 initial={{ opacity: 0 }}
