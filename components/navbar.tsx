@@ -47,10 +47,9 @@ export function Navbar() {
               e.preventDefault()
               window.scrollTo({ top: 0, behavior: "smooth" })
             }}
-            className="group flex items-center gap-3"
+            className="group flex items-center"
           >
             <img src="/rhea-logo.png" alt="Rhea" className="h-6 md:h-7 w-auto opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-            <span className="font-mono text-[10px] tracking-[0.2em] text-muted-foreground">RHEA</span>
           </a>
 
           {/* Desktop Navigation */}

@@ -22,7 +22,7 @@ export function Hero() {
       </div>
 
       {/* Typography Overlay */}
-      <motion.div style={{ opacity, scale }} className="relative z-10 h-full flex flex-col justify-between p-8 md:p-12 md:px-12 md:py-20">
+      <motion.div style={{ opacity, scale }} className="relative z-10 h-full flex flex-col justify-between p-8 pt-24 md:p-12 md:pt-32 md:px-12">
         {/* Top Left */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
