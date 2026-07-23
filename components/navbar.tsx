@@ -47,10 +47,10 @@ export function Navbar() {
               e.preventDefault()
               window.scrollTo({ top: 0, behavior: "smooth" })
             }}
-            className="group flex items-center gap-2"
+            className="group flex items-center gap-3"
           >
-            <span className="font-mono text-xs tracking-widest text-muted-foreground">PORTFOLIO</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-accent group-hover:scale-150 transition-transform duration-300" />
+            <img src="/rhea-logo.png" alt="Rhea" className="h-6 md:h-7 w-auto opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
+            <span className="font-mono text-[10px] tracking-[0.2em] text-muted-foreground">RHEA</span>
           </a>
 
           {/* Desktop Navigation */}
@@ -75,7 +75,7 @@ export function Navbar() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
             </span>
-            <span className="font-mono text-xs tracking-wider text-muted-foreground">AVAILABLE FOR WORK</span>
+            <span className="font-mono text-xs tracking-wider text-muted-foreground">GLOBAL IMPACT</span>
           </div>
 
           {/* Mobile Menu Button */}
@@ -135,7 +135,7 @@ export function Navbar() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
                 </span>
-                <span className="font-mono text-xs tracking-wider text-muted-foreground">AVAILABLE FOR WORK</span>
+                <span className="font-mono text-xs tracking-wider text-muted-foreground">GLOBAL IMPACT</span>
               </motion.div>
             </nav>
           </motion.div>

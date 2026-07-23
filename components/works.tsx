@@ -7,26 +7,26 @@ import { motion, useMotionValue, useSpring } from "framer-motion"
 
 const projects = [
   {
-    title: "Neural Interface",
-    tags: ["Next.js", "OpenAI", "WebGL"],
+    title: "Governance AI Platform",
+    tags: ["Enterprise", "AI", "Compliance"],
     image: "/abstract-neural-network-visualization-dark-theme.jpg",
     year: "2024",
   },
   {
-    title: "Quantum Dashboard",
-    tags: ["React", "D3.js", "Python"],
+    title: "Enterprise Data Backbone",
+    tags: ["Infrastructure", "Scalability", "Security"],
     image: "/futuristic-data-dashboard-dark-minimal.jpg",
     year: "2024",
   },
   {
-    title: "Synthetic Memory",
-    tags: ["TypeScript", "LangChain", "Vector DB"],
+    title: "NGO Impact Analytics",
+    tags: ["Analytics", "Impact Measurement", "Reporting"],
     image: "/abstract-memory-storage-visualization.jpg",
     year: "2023",
   },
   {
-    title: "Echo Protocol",
-    tags: ["Rust", "WebAssembly", "Audio"],
+    title: "Advanced AI Inference Engine",
+    tags: ["AI/ML", "Edge Computing", "Real-time"],
     image: "/sound-wave-visualization-dark-theme.jpg",
     year: "2023",
   },
@@ -60,8 +60,8 @@ export function Works() {
         transition={{ duration: 0.8 }}
         className="mb-24"
       >
-        <p className="font-mono text-xs tracking-[0.3em] text-muted-foreground mb-4">04 — SELECTED WORKS</p>
-        <h2 className="font-sans text-3xl md:text-5xl font-light italic">The Distortion Gallery</h2>
+        <p className="font-mono text-xs tracking-[0.3em] text-muted-foreground mb-4">04 — SOLUTIONS</p>
+        <h2 className="font-sans text-3xl md:text-5xl font-light italic">Enterprise & AI Solutions</h2>
       </motion.div>
 
       {/* Projects List */}

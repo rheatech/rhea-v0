@@ -27,7 +27,7 @@ export function Footer() {
     <footer className="relative">
       {/* Main CTA */}
       <motion.a
-        href="mailto:hello@example.com"
+        href="mailto:hello@rhea.tech"
         data-cursor-hover
         className="relative block overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
@@ -51,7 +51,7 @@ export function Footer() {
               }}
               transition={{ duration: 0.3 }}
             >
-              Let's <span className="italic">Collaborate</span>
+              Transform <span className="italic">Your</span> Infrastructure
             </motion.h2>
 
             <motion.div
@@ -78,7 +78,7 @@ export function Footer() {
 
           {/* Links */}
           <div className="flex gap-8">
-            {["LinkedIn", "GitHub", "Twitter"].map((link) => (
+            {["LinkedIn", "GitHub", "X"].map((link) => (
               <a
                 key={link}
                 href="#"
@@ -91,7 +91,7 @@ export function Footer() {
           </div>
 
           {/* Copyright */}
-          <p className="font-mono text-xs tracking-widest text-muted-foreground">© {new Date().getFullYear()}</p>
+          <p className="font-mono text-xs tracking-widest text-muted-foreground">© {new Date().getFullYear()} RHEA</p>
         </div>
       </div>
     </footer>
