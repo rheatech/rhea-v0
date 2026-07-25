@@ -2,6 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { SentientSphere } from "./sentient-sphere"
 
 export function ContactHero() {
   const containerRef = useRef<HTMLSection>(null)
@@ -15,21 +16,9 @@ export function ContactHero() {
 
   return (
     <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* Animated Lines Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 1000 1000"
-          preserveAspectRatio="none"
-          initial={{ opacity: 0.2 }}
-          animate={{ opacity: 0.4 }}
-          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, repeatType: "reverse" }}
-        >
-          <line x1="0" y1="0" x2="1000" y2="1000" stroke="rgba(37, 99, 235, 0.1)" strokeWidth="2" />
-          <line x1="1000" y1="0" x2="0" y2="1000" stroke="rgba(37, 99, 235, 0.1)" strokeWidth="2" />
-          <line x1="500" y1="0" x2="500" y2="1000" stroke="rgba(37, 99, 235, 0.05)" strokeWidth="1" />
-          <line x1="0" y1="500" x2="1000" y2="500" stroke="rgba(37, 99, 235, 0.05)" strokeWidth="1" />
-        </motion.svg>
+      {/* 3D Sphere Background */}
+      <div className="absolute inset-0">
+        <SentientSphere />
       </div>
 
       {/* Content */}
