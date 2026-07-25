@@ -2,7 +2,7 @@
 
 import { useRef } from "react"
 import Link from "next/link"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform, useInView } from "framer-motion"
 
 const services = [
   {
@@ -60,15 +60,20 @@ export function ServiceGrid() {
         </motion.div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          {services.map((service, index) => (
-            <motion.div
-              key={service.slug}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
-              viewport={{ once: true }}
-            >
+        <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          {services.map((service, index) => {
+            const cardRef = useRef<HTMLDivElement>(null)
+            const isInView = useInView(cardRef, { once: true, margin: "-100px" })
+
+            return (
+              <motion.div
+                ref={cardRef}
+                key={service.slug}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: isInView ? index * 0.1 : 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+              >
               <Link href={`/services/${service.slug}`}>
                 <div className="group relative p-8 md:p-10 border border-white/10 hover:border-white/30 rounded-lg transition-all duration-500 cursor-pointer overflow-hidden">
                   {/* Hover Background */}
@@ -118,8 +123,9 @@ export function ServiceGrid() {
                 </div>
               </Link>
             </motion.div>
-          ))}
-        </div>
+            )
+          })}
+        </motion.div>
       </div>
     </section>
   )

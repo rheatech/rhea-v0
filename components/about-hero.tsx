@@ -12,6 +12,10 @@ export function AboutHero() {
 
   const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0])
   const y = useTransform(scrollYProgress, [0, 0.4], [0, 80])
+  
+  // Parallax scrollytelling effects
+  const titleY = useTransform(scrollYProgress, [0, 0.5], [0, -120])
+  const statsScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.85])
 
   return (
     <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
@@ -37,6 +41,7 @@ export function AboutHero() {
       {/* Content */}
       <motion.div style={{ opacity, y }} className="relative z-10 text-center px-8 md:px-12 max-w-4xl">
         <motion.div
+          style={{ y: titleY }}
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
@@ -55,6 +60,7 @@ export function AboutHero() {
         {/* Stats */}
         <motion.div
           className="mt-16 md:mt-20 grid grid-cols-3 gap-8"
+          style={{ scale: statsScale }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.8 }}

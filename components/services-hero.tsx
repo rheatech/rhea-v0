@@ -12,6 +12,10 @@ export function ServicesHero() {
 
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
   const y = useTransform(scrollYProgress, [0, 0.5], [0, 100])
+  
+  // Parallax scrollytelling
+  const titleY = useTransform(scrollYProgress, [0, 0.5], [0, -150])
+  const gridY = useTransform(scrollYProgress, [0, 0.6], [0, -100])
 
   return (
     <section ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
@@ -38,6 +42,7 @@ export function ServicesHero() {
       {/* Content */}
       <motion.div style={{ opacity, y }} className="relative z-10 text-center px-8 md:px-12">
         <motion.div
+          style={{ y: titleY }}
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
