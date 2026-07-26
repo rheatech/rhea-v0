@@ -2,7 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { Mesh3DPolyhedron } from "./3d-mesh-polyhedron"
+import { SentientSphereAbout } from "./sentient-sphere-about"
 
 export function AboutHero() {
   const containerRef = useRef<HTMLSection>(null)
@@ -17,13 +17,17 @@ export function AboutHero() {
   // Parallax scrollytelling effects
   const titleY = useTransform(scrollYProgress, [0, 0.5], [0, -120])
   const statsScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.85])
+  const sphereOpacity = useTransform(scrollYProgress, [0, 0.5], [0.4, 0.15])
 
   return (
     <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* 3D Polyhedron Background - Blended */}
-      <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-35">
-        <Mesh3DPolyhedron />
-      </div>
+      {/* 3D Sentient Sphere Background - Blended with Scrollytelling */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none mix-blend-screen"
+        style={{ opacity: sphereOpacity }}
+      >
+        <SentientSphereAbout />
+      </motion.div>
       
       {/* Background Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none" />

@@ -2,7 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { Mesh3DCube } from "./3d-mesh-cube"
+import { SentientSphereContact } from "./sentient-sphere-contact"
 
 export function ContactHero() {
   const containerRef = useRef<HTMLSection>(null)
@@ -13,13 +13,17 @@ export function ContactHero() {
 
   const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 0.4], [1, 0.9])
+  const sphereOpacity = useTransform(scrollYProgress, [0, 0.5], [0.35, 0.1])
 
   return (
     <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* 3D Cube Background - Blended */}
-      <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-35">
-        <Mesh3DCube />
-      </div>
+      {/* 3D Sentient Sphere Background - Blended with Scrollytelling */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none mix-blend-screen"
+        style={{ opacity: sphereOpacity }}
+      >
+        <SentientSphereContact />
+      </motion.div>
       
       {/* Background Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none" />
