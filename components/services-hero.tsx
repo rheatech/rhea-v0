@@ -2,6 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { Mesh3DTorus } from "./3d-mesh-torus"
 
 export function ServicesHero() {
   const containerRef = useRef<HTMLElement>(null)
@@ -12,32 +13,25 @@ export function ServicesHero() {
 
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
   const y = useTransform(scrollYProgress, [0, 0.5], [0, 100])
+  
+  // Parallax scrollytelling
+  const titleY = useTransform(scrollYProgress, [0, 0.5], [0, -150])
+  const gridY = useTransform(scrollYProgress, [0, 0.6], [0, -100])
 
   return (
-    <section ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* Animated Background Grid */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `linear-gradient(0deg, transparent 24%, rgba(37, 99, 235, 0.05) 25%, rgba(37, 99, 235, 0.05) 26%, transparent 27%, transparent 74%, rgba(37, 99, 235, 0.05) 75%, rgba(37, 99, 235, 0.05) 76%, transparent 77%, transparent),
-                             linear-gradient(90deg, transparent 24%, rgba(37, 99, 235, 0.05) 25%, rgba(37, 99, 235, 0.05) 26%, transparent 27%, transparent 74%, rgba(37, 99, 235, 0.05) 75%, rgba(37, 99, 235, 0.05) 76%, transparent 77%, transparent)`,
-            backgroundSize: "50px 50px",
-          }}
-          animate={{
-            y: [0, 50],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "linear",
-          }}
-        />
+    <section ref={containerRef} className="relative w-full overflow-hidden bg-[#050505] flex items-center justify-center" style={{ height: "120vh" }}>
+      {/* 3D Torus Background - Blended */}
+      <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-40">
+        <Mesh3DTorus />
       </div>
+      
+      {/* Background Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505] pointer-events-none" />
 
       {/* Content */}
       <motion.div style={{ opacity, y }} className="relative z-10 text-center px-8 md:px-12">
         <motion.div
+          style={{ y: titleY }}
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}

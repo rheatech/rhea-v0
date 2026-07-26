@@ -42,6 +42,11 @@ export function ServiceDetailHero({ slug }: { slug: string }) {
   const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0.3])
   const scale = useTransform(scrollYProgress, [0, 0.4], [1, 0.95])
   const blur = useTransform(scrollYProgress, [0, 0.4], [0, 10])
+  
+  // Parallax effects for scrollytelling
+  const titleY = useTransform(scrollYProgress, [0, 0.5], [0, -100])
+  const subtitleY = useTransform(scrollYProgress, [0, 0.5], [0, -80])
+  const descY = useTransform(scrollYProgress, [0, 0.5], [0, -60])
 
   // Animated text stagger
   const titleVariants = {
@@ -89,6 +94,7 @@ export function ServiceDetailHero({ slug }: { slug: string }) {
         >
           <motion.p
             className="font-mono text-xs tracking-[0.3em] text-accent mb-6"
+            style={{ y: subtitleY }}
             custom={0}
             variants={titleVariants}
             initial="hidden"
@@ -99,6 +105,7 @@ export function ServiceDetailHero({ slug }: { slug: string }) {
 
           <motion.h1
             className="font-sans text-5xl md:text-7xl lg:text-8xl font-light tracking-tight text-balance mb-8"
+            style={{ y: titleY }}
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.4 }}
@@ -108,6 +115,7 @@ export function ServiceDetailHero({ slug }: { slug: string }) {
 
           <motion.p
             className="max-w-3xl mx-auto font-mono text-sm md:text-base text-muted-foreground leading-relaxed"
+            style={{ y: descY }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.6 }}

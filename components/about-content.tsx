@@ -1,8 +1,25 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { useRef } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
 
 export function AboutContent() {
+  const missionRef = useRef<HTMLDivElement>(null)
+  const whyRheaRef = useRef<HTMLDivElement>(null)
+
+  const { scrollYProgress: missionProgress } = useScroll({
+    target: missionRef,
+    offset: ["start 80%", "start 20%"],
+  })
+  const { scrollYProgress: whyRheaProgress } = useScroll({
+    target: whyRheaRef,
+    offset: ["start 80%", "start 20%"],
+  })
+
+  const missionOpacity = useTransform(missionProgress, [0, 0.5, 1], [0.3, 1, 0.3])
+  const whyRheaOpacity = useTransform(whyRheaProgress, [0, 0.5, 1], [0.3, 1, 0.3])
+  const whyRheaScale = useTransform(whyRheaProgress, [0, 0.5, 1], [0.95, 1, 0.95])
+
   const sectionVariants = {
     hidden: { opacity: 0, y: 40 },
     visible: {
@@ -40,7 +57,11 @@ export function AboutContent() {
     <section className="relative py-24 md:py-32 px-8 md:px-12 bg-[#050505]">
       <div className="max-w-6xl mx-auto">
         {/* Mission, Vision, Values */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 mb-24">
+        <motion.div
+          ref={missionRef}
+          style={{ opacity: missionOpacity }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 mb-24"
+        >
           {items.map((item, index) => (
             <motion.div
               key={item.title}
@@ -54,7 +75,7 @@ export function AboutContent() {
               <p className="font-mono text-sm text-muted-foreground leading-relaxed">{item.description}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Divider */}
         <motion.div
@@ -67,6 +88,8 @@ export function AboutContent() {
 
         {/* Why Rhea */}
         <motion.div
+          ref={whyRheaRef}
+          style={{ opacity: whyRheaOpacity, scale: whyRheaScale }}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}

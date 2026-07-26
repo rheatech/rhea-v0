@@ -2,6 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { SentientSphereContact } from "./sentient-sphere-contact"
 
 export function ContactHero() {
   const containerRef = useRef<HTMLSection>(null)
@@ -12,25 +13,20 @@ export function ContactHero() {
 
   const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 0.4], [1, 0.9])
+  const sphereOpacity = useTransform(scrollYProgress, [0, 0.5], [0.35, 0.1])
 
   return (
     <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* Animated Lines Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 1000 1000"
-          preserveAspectRatio="none"
-          initial={{ opacity: 0.2 }}
-          animate={{ opacity: 0.4 }}
-          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, repeatType: "reverse" }}
-        >
-          <line x1="0" y1="0" x2="1000" y2="1000" stroke="rgba(37, 99, 235, 0.1)" strokeWidth="2" />
-          <line x1="1000" y1="0" x2="0" y2="1000" stroke="rgba(37, 99, 235, 0.1)" strokeWidth="2" />
-          <line x1="500" y1="0" x2="500" y2="1000" stroke="rgba(37, 99, 235, 0.05)" strokeWidth="1" />
-          <line x1="0" y1="500" x2="1000" y2="500" stroke="rgba(37, 99, 235, 0.05)" strokeWidth="1" />
-        </motion.svg>
-      </div>
+      {/* 3D Sentient Sphere Background - Blended with Scrollytelling */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none mix-blend-screen"
+        style={{ opacity: sphereOpacity }}
+      >
+        <SentientSphereContact />
+      </motion.div>
+      
+      {/* Background Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none" />
 
       {/* Content */}
       <motion.div style={{ opacity, scale }} className="relative z-10 text-center px-8 md:px-12 max-w-4xl">

@@ -1,6 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { useRef } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
 
 const serviceContent: Record<
   string,
@@ -90,6 +91,28 @@ const serviceContent: Record<
 
 export function ServiceContent({ slug }: { slug: string }) {
   const content = serviceContent[slug] || serviceContent["enterprise-infrastructure"]
+  const featuresRef = useRef<HTMLDivElement>(null)
+  const benefitsRef = useRef<HTMLDivElement>(null)
+  const useCasesRef = useRef<HTMLDivElement>(null)
+
+  // Scroll-based animations for each section
+  const { scrollYProgress: featuresProgress } = useScroll({
+    target: featuresRef,
+    offset: ["start center", "end center"],
+  })
+  const { scrollYProgress: benefitsProgress } = useScroll({
+    target: benefitsRef,
+    offset: ["start center", "end center"],
+  })
+  const { scrollYProgress: useCasesProgress } = useScroll({
+    target: useCasesRef,
+    offset: ["start center", "end center"],
+  })
+
+  // Parallax transforms
+  const featuresOpacity = useTransform(featuresProgress, [0, 0.5, 1], [0.3, 1, 0.3])
+  const benefitsOpacity = useTransform(benefitsProgress, [0, 0.5, 1], [0.3, 1, 0.3])
+  const useCasesOpacity = useTransform(useCasesProgress, [0, 0.5, 1], [0.3, 1, 0.3])
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -118,11 +141,13 @@ export function ServiceContent({ slug }: { slug: string }) {
       <div className="max-w-6xl mx-auto">
         {/* Features */}
         <motion.div
+          ref={featuresRef}
           className="mb-24"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
+          style={{ opacity: featuresOpacity }}
         >
           <motion.h2 className="font-sans text-3xl md:text-5xl font-light mb-12 text-balance" variants={itemVariants}>
             Core <span className="italic">Features</span>
@@ -138,11 +163,13 @@ export function ServiceContent({ slug }: { slug: string }) {
 
         {/* Benefits */}
         <motion.div
+          ref={benefitsRef}
           className="mb-24"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
+          style={{ opacity: benefitsOpacity }}
         >
           <motion.h2 className="font-sans text-3xl md:text-5xl font-light mb-12 text-balance" variants={itemVariants}>
             Key <span className="italic">Benefits</span>
@@ -163,10 +190,12 @@ export function ServiceContent({ slug }: { slug: string }) {
 
         {/* Use Cases */}
         <motion.div
+          ref={useCasesRef}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
           variants={containerVariants}
+          style={{ opacity: useCasesOpacity }}
         >
           <motion.h2 className="font-sans text-3xl md:text-5xl font-light mb-12 text-balance" variants={itemVariants}>
             Ideal <span className="italic">For</span>

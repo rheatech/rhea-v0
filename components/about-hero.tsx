@@ -2,6 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { SentientSphereAbout } from "./sentient-sphere-about"
 
 export function AboutHero() {
   const containerRef = useRef<HTMLSection>(null)
@@ -12,31 +13,29 @@ export function AboutHero() {
 
   const opacity = useTransform(scrollYProgress, [0, 0.4], [1, 0])
   const y = useTransform(scrollYProgress, [0, 0.4], [0, 80])
+  
+  // Parallax scrollytelling effects
+  const titleY = useTransform(scrollYProgress, [0, 0.5], [0, -120])
+  const statsScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.85])
+  const sphereOpacity = useTransform(scrollYProgress, [0, 0.5], [0.4, 0.15])
 
   return (
     <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* Animated Dots Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle, rgba(37, 99, 235, 0.1) 1px, transparent 1px)`,
-            backgroundSize: "40px 40px",
-          }}
-          animate={{
-            x: [0, 40],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "linear",
-          }}
-        />
-      </div>
+      {/* 3D Sentient Sphere Background - Blended with Scrollytelling */}
+      <motion.div 
+        className="absolute inset-0 pointer-events-none mix-blend-screen"
+        style={{ opacity: sphereOpacity }}
+      >
+        <SentientSphereAbout />
+      </motion.div>
+      
+      {/* Background Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none" />
 
       {/* Content */}
       <motion.div style={{ opacity, y }} className="relative z-10 text-center px-8 md:px-12 max-w-4xl">
         <motion.div
+          style={{ y: titleY }}
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
@@ -55,6 +54,7 @@ export function AboutHero() {
         {/* Stats */}
         <motion.div
           className="mt-16 md:mt-20 grid grid-cols-3 gap-8"
+          style={{ scale: statsScale }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8, duration: 0.8 }}

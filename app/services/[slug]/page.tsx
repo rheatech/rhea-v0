@@ -4,9 +4,10 @@ import { Navbar } from "@/components/navbar"
 import { CustomCursor } from "@/components/custom-cursor"
 import { SmoothScroll } from "@/components/smooth-scroll"
 import { Footer } from "@/components/footer"
-import { ServiceDetailHero } from "@/components/service-detail-hero"
+import { ServiceHeroVariant } from "@/components/service-hero-variants"
 import { ServiceContent } from "@/components/service-content"
 import { ServiceCallToAction } from "@/components/service-cta"
+import { getServiceData } from "@/lib/service-data"
 
 interface ServiceDetailPageProps {
   params: Promise<{
@@ -16,13 +17,14 @@ interface ServiceDetailPageProps {
 
 export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {
   const { slug } = await params
+  const serviceData = getServiceData(slug)
 
   return (
     <SmoothScroll>
       <CustomCursor />
       <Navbar />
       <main>
-        <ServiceDetailHero slug={slug} />
+        <ServiceHeroVariant service={serviceData} variant={serviceData.variant} />
         <ServiceContent slug={slug} />
         <ServiceCallToAction />
         <Footer />
