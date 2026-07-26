@@ -57,31 +57,28 @@ function TorusMesh() {
     varying vec3 vPosition;
     
     void main() {
-      // Depth-based shading
+      // Premium grayscale shading
       float depth = vNormal.z * 0.5 + 0.5;
-      float intensity = 0.35 + depth * 0.3 + vWave * 1.8;
+      float normalBright = length(vNormal) * 0.5;
+      float intensity = 0.25 + depth * 0.2 + vWave * 1.0 + normalBright * 0.15;
       
-      vec3 color = vec3(
-        intensity * 0.5 + depth * 0.3,
-        intensity * 0.75 + depth * 0.25,
-        intensity * 0.95
-      );
+      vec3 color = vec3(intensity);
       
-      // Multi-layer radial pattern
+      // Fine-line pattern for premium look
       float radial = length(vUv - 0.5);
-      float lines = mod(radial * 20.0 + vUv.x * 12.0, 1.0);
-      lines = smoothstep(0.0, 0.08, lines) * smoothstep(0.2, 0.15, lines);
+      float lines = mod(radial * 28.0 + vUv.x * 16.0, 1.0);
+      lines = smoothstep(0.0, 0.05, lines) * smoothstep(0.15, 0.12, lines);
       
-      float rings = mod(radial * 10.0, 1.0);
-      rings = smoothstep(0.0, 0.05, rings) * smoothstep(0.1, 0.08, rings);
+      float rings = mod(radial * 14.0, 1.0);
+      rings = smoothstep(0.0, 0.03, rings) * smoothstep(0.1, 0.07, rings);
       
-      color += lines * 0.35 + rings * 0.25;
+      color += (lines * 0.2 + rings * 0.12) * 0.7;
       
-      // Fresnel effect
-      float fresnel = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.0);
-      color += fresnel * 0.2;
+      // Subtle fresnel for edge definition
+      float fresnel = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.5);
+      color += fresnel * 0.1;
       
-      gl_FragColor = vec4(color, 0.72);
+      gl_FragColor = vec4(color, 0.6);
     }
   `
 
@@ -146,9 +143,8 @@ export function Mesh3DTorus() {
         alpha: true,
       }}
     >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[8, 5, 3]} intensity={0.5} />
-      <pointLight position={[0, 0, 8]} intensity={0.3} color="#2563eb" />
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[8, 5, 3]} intensity={0.6} color="#ffffff" />
       <TorusMesh />
     </Canvas>
   )

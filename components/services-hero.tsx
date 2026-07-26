@@ -19,11 +19,14 @@ export function ServicesHero() {
   const gridY = useTransform(scrollYProgress, [0, 0.6], [0, -100])
 
   return (
-    <section ref={containerRef} className="relative min-h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* 3D Torus Background */}
-      <div className="absolute inset-0">
+    <section ref={containerRef} className="relative w-full overflow-hidden bg-[#050505] flex items-center justify-center" style={{ height: "120vh" }}>
+      {/* 3D Torus Background - Blended */}
+      <div className="absolute inset-0 pointer-events-none mix-blend-screen opacity-40">
         <Mesh3DTorus />
       </div>
+      
+      {/* Background Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050505] pointer-events-none" />
 
       {/* Content */}
       <motion.div style={{ opacity, y }} className="relative z-10 text-center px-8 md:px-12">

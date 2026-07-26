@@ -20,10 +20,13 @@ export function AboutHero() {
 
   return (
     <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* 3D Polyhedron Background */}
-      <div className="absolute inset-0">
+      {/* 3D Polyhedron Background - Blended */}
+      <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-35">
         <Mesh3DPolyhedron />
       </div>
+      
+      {/* Background Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050505] via-transparent to-[#050505] pointer-events-none" />
 
       {/* Content */}
       <motion.div style={{ opacity, y }} className="relative z-10 text-center px-8 md:px-12 max-w-4xl">

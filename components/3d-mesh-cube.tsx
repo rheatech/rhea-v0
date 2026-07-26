@@ -58,37 +58,30 @@ function CubeCluster() {
     varying vec3 vPosition;
     
     void main() {
-      // Complex color mapping based on multiple factors
+      // Premium grayscale shading
       float depth = vNormal.z * 0.5 + 0.5;
-      float wave_intensity = vWave * 0.6 + 0.3;
+      float intensity = 0.2 + depth * 0.25 + vWave * 0.8;
       
-      vec3 color = vec3(
-        0.12 + depth * 0.25 + wave_intensity * 0.3,
-        0.35 + depth * 0.3 + wave_intensity * 0.2,
-        0.85 + depth * 0.1 + wave_intensity * 0.15
-      );
+      vec3 color = vec3(intensity);
       
-      // Cyan accent
-      color += vec3(0.0, 0.3 * wave_intensity, 0.4 * wave_intensity);
-      
-      // High-frequency checkerboard
-      float checkerX = mod(vUv.x * 16.0, 2.0);
-      float checkerY = mod(vUv.y * 16.0, 2.0);
+      // Premium checkerboard pattern
+      float checkerX = mod(vUv.x * 18.0, 2.0);
+      float checkerY = mod(vUv.y * 18.0, 2.0);
       float checker = step(1.0, checkerX + checkerY) * 2.0 - 1.0;
-      checker = mix(0.8, 1.2, checker * 0.5 + 0.5);
+      checker = mix(0.85, 1.15, checker * 0.5 + 0.5);
       color *= checker;
       
-      // Edge detection and glow
-      float edge = abs(mod(vUv.x * 8.0, 1.0) - 0.5) * 2.0;
-      edge = min(edge, abs(mod(vUv.y * 8.0, 1.0) - 0.5) * 2.0);
-      edge = smoothstep(0.0, 0.2, edge);
-      color += vec3(0.1, 0.3, 0.6) * (1.0 - edge) * 0.4;
+      // Subtle edge definition
+      float edge = abs(mod(vUv.x * 9.0, 1.0) - 0.5) * 2.0;
+      edge = min(edge, abs(mod(vUv.y * 9.0, 1.0) - 0.5) * 2.0);
+      edge = smoothstep(0.0, 0.25, edge);
+      color += (1.0 - edge) * 0.1;
       
-      // Fresnel rim light
+      // Subtle fresnel for edge definition
       float fresnel = pow(1.0 - abs(dot(vNormal, vec3(0.0, 0.0, 1.0))), 2.5);
-      color += vec3(0.0, 0.4, 0.8) * fresnel * 0.3;
+      color += fresnel * 0.1;
       
-      gl_FragColor = vec4(color, 0.82);
+      gl_FragColor = vec4(color, 0.72);
     }
   `
 
@@ -157,9 +150,8 @@ export function Mesh3DCube() {
         alpha: true,
       }}
     >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 5, 5]} intensity={0.4} />
-      <pointLight position={[-5, -5, 5]} intensity={0.3} color="#00ddff" />
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 5, 5]} intensity={0.5} color="#ffffff" />
       <CubeCluster />
     </Canvas>
   )

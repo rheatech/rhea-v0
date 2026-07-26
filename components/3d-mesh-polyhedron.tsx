@@ -58,30 +58,24 @@ function Polyhedron() {
       float depth = vNormal.z * 0.5 + 0.5;
       float normalBright = length(vNormal) * 0.3;
       
-      vec3 baseColor = vec3(
-        0.15 + depth * 0.4 + normalBright * 0.2,
-        0.25 + depth * 0.35 + normalBright * 0.15,
-        0.45 + depth * 0.25 + normalBright * 0.15
-      );
+      float intensity = 0.2 + depth * 0.3 + normalBright * 0.15 + vPulse * 0.3;
+      vec3 baseColor = vec3(intensity);
       
-      // Enhanced pulse effect
-      baseColor += vec3(vPulse * 0.5 + 0.2);
+      // Premium grid pattern for enterprise look
+      float gridX = mod(vUv.x * 24.0, 1.0);
+      gridX = smoothstep(0.0, 0.035, gridX) * smoothstep(0.11, 0.075, gridX);
       
-      // High-density grid pattern
-      float gridX = mod(vUv.x * 20.0, 1.0);
-      gridX = smoothstep(0.0, 0.04, gridX) * smoothstep(0.12, 0.08, gridX);
-      
-      float gridY = mod(vUv.y * 20.0, 1.0);
-      gridY = smoothstep(0.0, 0.04, gridY) * smoothstep(0.12, 0.08, gridY);
+      float gridY = mod(vUv.y * 24.0, 1.0);
+      gridY = smoothstep(0.0, 0.035, gridY) * smoothstep(0.11, 0.075, gridY);
       
       float grid = gridX + gridY;
-      baseColor += grid * 0.28;
+      baseColor += grid * 0.2;
       
-      // Fresnel glow for edges
+      // Subtle fresnel for definition
       float fresnel = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 2.5);
-      baseColor += fresnel * 0.25;
+      baseColor += fresnel * 0.12;
       
-      gl_FragColor = vec4(baseColor, 0.78);
+      gl_FragColor = vec4(baseColor, 0.68);
     }
   `
 
@@ -148,8 +142,7 @@ export function Mesh3DPolyhedron() {
       }}
     >
       <ambientLight intensity={0.6} />
-      <directionalLight position={[6, 6, 4]} intensity={0.45} />
-      <pointLight position={[-8, 3, 5]} intensity={0.35} color="#7c3aed" />
+      <directionalLight position={[6, 6, 4]} intensity={0.55} color="#ffffff" />
       <Polyhedron />
     </Canvas>
   )
