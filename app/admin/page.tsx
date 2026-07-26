@@ -5,14 +5,16 @@ import { motion } from 'framer-motion'
 import { DashboardOverview } from '@/components/admin/dashboard-overview'
 import { FormSubmissionsManager } from '@/components/admin/form-submissions-manager'
 import { ClientsDashboard } from '@/components/admin/clients-dashboard'
+import { AdvancedAnalytics } from '@/components/admin/advanced-analytics'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'submissions' | 'clients'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'submissions' | 'clients' | 'analytics'>('overview')
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: '📊' },
+    { id: 'analytics', label: 'Advanced Analytics', icon: '📈' },
     { id: 'submissions', label: 'Form Submissions', icon: '📝' },
     { id: 'clients', label: 'Clients', icon: '👥' },
   ]
@@ -62,6 +64,7 @@ export default function AdminPage() {
             transition={{ duration: 0.3 }}
           >
             {activeTab === 'overview' && <DashboardOverview />}
+            {activeTab === 'analytics' && <AdvancedAnalytics />}
             {activeTab === 'submissions' && <FormSubmissionsManager />}
             {activeTab === 'clients' && <ClientsDashboard />}
           </motion.div>
