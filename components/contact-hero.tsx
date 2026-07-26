@@ -2,7 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { SentientSphere } from "./sentient-sphere"
+import { Mesh3DCube } from "./3d-mesh-cube"
 
 export function ContactHero() {
   const containerRef = useRef<HTMLSection>(null)
@@ -16,9 +16,9 @@ export function ContactHero() {
 
   return (
     <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* 3D Sphere Background */}
+      {/* 3D Cube Background */}
       <div className="absolute inset-0">
-        <SentientSphere />
+        <Mesh3DCube />
       </div>
 
       {/* Content */}

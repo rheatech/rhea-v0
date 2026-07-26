@@ -2,6 +2,7 @@
 
 import { useRef } from "react"
 import { motion, useScroll, useTransform } from "framer-motion"
+import { Mesh3DPolyhedron } from "./3d-mesh-polyhedron"
 
 export function AboutHero() {
   const containerRef = useRef<HTMLSection>(null)
@@ -19,23 +20,9 @@ export function AboutHero() {
 
   return (
     <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-[#050505] flex items-center justify-center">
-      {/* Animated Dots Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle, rgba(37, 99, 235, 0.1) 1px, transparent 1px)`,
-            backgroundSize: "40px 40px",
-          }}
-          animate={{
-            x: [0, 40],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "linear",
-          }}
-        />
+      {/* 3D Polyhedron Background */}
+      <div className="absolute inset-0">
+        <Mesh3DPolyhedron />
       </div>
 
       {/* Content */}
