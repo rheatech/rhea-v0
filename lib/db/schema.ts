@@ -9,6 +9,7 @@ export const user = pgTable('user', {
   email: text('email').notNull().unique(),
   emailVerified: boolean('emailVerified').notNull().default(false),
   image: text('image'),
+  isAdmin: boolean('isAdmin').notNull().default(false),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
@@ -131,4 +132,76 @@ export const clientData = pgTable('clientData', {
   notes: text('notes'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+})
+
+// --- Advanced Analytics ---
+export const siteVisits = pgTable('siteVisits', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  sessionId: text('sessionId').notNull(),
+  deploymentUrl: text('deploymentUrl').notNull(),
+  page: text('page').notNull(),
+  referrer: text('referrer'),
+  duration: integer('duration').notNull().default(0),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const deviceAnalytics = pgTable('deviceAnalytics', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  sessionId: text('sessionId').notNull(),
+  deviceType: text('deviceType').notNull(),
+  osName: text('osName').notNull(),
+  osVersion: text('osVersion'),
+  browserName: text('browserName').notNull(),
+  browserVersion: text('browserVersion'),
+  userAgent: text('userAgent'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const locationAnalytics = pgTable('locationAnalytics', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  sessionId: text('sessionId').notNull(),
+  country: text('country'),
+  region: text('region'),
+  city: text('city'),
+  latitude: numeric('latitude', { precision: 10, scale: 6 }),
+  longitude: numeric('longitude', { precision: 10, scale: 6 }),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const deploymentTracking = pgTable('deploymentTracking', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  deploymentUrl: text('deploymentUrl').notNull(),
+  environment: text('environment').notNull(),
+  visits: integer('visits').notNull().default(0),
+  uniqueVisitors: integer('uniqueVisitors').notNull().default(0),
+  lastSeen: timestamp('lastSeen').notNull().defaultNow(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const timeMetrics = pgTable('timeMetrics', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  sessionId: text('sessionId').notNull(),
+  page: text('page').notNull(),
+  timeSpent: integer('timeSpent').notNull().default(0),
+  scrollDepth: numeric('scrollDepth', { precision: 5, scale: 2 }).notNull().default('0'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+})
+
+export const utmTracking = pgTable('utmTracking', {
+  id: serial('id').primaryKey(),
+  userId: text('userId').notNull(),
+  sessionId: text('sessionId').notNull(),
+  source: text('source'),
+  medium: text('medium'),
+  campaign: text('campaign'),
+  content: text('content'),
+  term: text('term'),
+  conversions: integer('conversions').notNull().default(0),
+  revenue: numeric('revenue', { precision: 12, scale: 2 }).default('0'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
 })
