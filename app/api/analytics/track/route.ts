@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { siteVisits, deviceAnalytics, locationAnalytics, timeMetrics, utmTracking, deploymentTracking } from '@/lib/db/schema'
 import { NextRequest, NextResponse } from 'next/server'
+import { eq } from 'drizzle-orm'
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,8 +34,8 @@ export async function POST(request: NextRequest) {
       scrollDepth,
     } = body
 
-    // Create site visit record
-    await db.insert(siteVisits).values({
+    // Create site visit record (core analytics)
+    const visitRecord = await db.insert(siteVisits).values({
       userId: userId || 'anonymous',
       sessionId,
       deploymentUrl,
@@ -42,18 +43,24 @@ export async function POST(request: NextRequest) {
       referrer: referrer || null,
       duration: duration || 0,
     })
+    
+    console.log('[v0] Site visit recorded:', { page, deploymentUrl, sessionId })
 
-    // Create device analytics record
-    await db.insert(deviceAnalytics).values({
-      userId: userId || 'anonymous',
-      sessionId,
-      deviceType,
-      osName,
-      osVersion: osVersion || null,
-      browserName,
-      browserVersion: browserVersion || null,
-      userAgent: userAgent || null,
-    })
+    // Create device analytics record - only if we have valid device info
+    if (deviceType && osName && browserName) {
+      await db.insert(deviceAnalytics).values({
+        userId: userId || 'anonymous',
+        sessionId,
+        deviceType,
+        osName,
+        osVersion: osVersion || null,
+        browserName,
+        browserVersion: browserVersion || null,
+        userAgent: userAgent || null,
+      })
+    } else {
+      console.log('[v0] Skipping device analytics - missing required fields:', { deviceType, osName, browserName })
+    }
 
     // Create location analytics record if available
     if (country || city) {
@@ -94,7 +101,7 @@ export async function POST(request: NextRequest) {
     const existingDeployment = await db
       .select()
       .from(deploymentTracking)
-      .where((t) => t.deploymentUrl + deploymentUrl === deploymentUrl)
+      .where(eq(deploymentTracking.deploymentUrl, deploymentUrl))
       .limit(1)
 
     if (existingDeployment && existingDeployment.length > 0) {
@@ -106,7 +113,7 @@ export async function POST(request: NextRequest) {
           visits: (current.visits || 0) + 1,
           lastSeen: new Date(),
         })
-        .where((t) => t.deploymentUrl + deploymentUrl === deploymentUrl)
+        .where(eq(deploymentTracking.deploymentUrl, deploymentUrl))
     } else {
       // Create new deployment record
       await db.insert(deploymentTracking).values({
@@ -117,6 +124,8 @@ export async function POST(request: NextRequest) {
         uniqueVisitors: 1,
       })
     }
+
+    console.log('[v0] Analytics tracked:', { page, deploymentUrl, sessionId, timestamp: new Date().toISOString() })
 
     return NextResponse.json({ success: true, sessionId })
   } catch (error) {

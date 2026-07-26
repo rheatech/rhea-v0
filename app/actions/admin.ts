@@ -117,61 +117,83 @@ export async function deleteClient(id: number) {
 
 // Analytics summary
 export async function getAnalyticsSummary() {
-  const userId = await getUserId()
-  const analytics = await db
+  const visits = await db
     .select()
-    .from(pageAnalytics)
-    .where(eq(pageAnalytics.userId, userId))
+    .from(siteVisits)
   
-  const totalViews = analytics.reduce((sum, a) => sum + a.views, 0)
-  const totalUniqueVisitors = analytics.reduce((sum, a) => sum + a.uniqueVisitors, 0)
-  const avgBounceRate =
-    analytics.length > 0
-      ? (analytics.reduce((sum, a) => sum + parseFloat(a.bounceRate.toString()), 0) / analytics.length).toFixed(2)
-      : '0'
+  const totalViews = visits.length
+  const uniqueSessions = new Set(visits.map((v) => v.sessionId)).size
+  
+  // Group by page
+  const pageStats: Record<string, { page: string; views: number; totalTime: number }> = {}
+  visits.forEach((visit) => {
+    if (!pageStats[visit.page]) {
+      pageStats[visit.page] = { page: visit.page, views: 0, totalTime: 0 }
+    }
+    pageStats[visit.page].views += 1
+    pageStats[visit.page].totalTime += visit.duration || 0
+  })
+
+  const topPages = Object.values(pageStats)
+    .sort((a, b) => b.views - a.views)
+    .slice(0, 5)
 
   return {
     totalViews,
-    totalUniqueVisitors,
-    avgBounceRate,
-    topPages: analytics.slice(0, 5),
+    totalUniqueVisitors: uniqueSessions,
+    avgBounceRate: '0',
+    topPages,
   }
 }
 
 export async function getPerformanceSummary() {
-  const userId = await getUserId()
-  const metrics = await db
-    .select()
-    .from(performanceMetrics)
-    .where(eq(performanceMetrics.userId, userId))
-    .orderBy(desc(performanceMetrics.createdAt))
-    .limit(100)
-  
-  if (metrics.length === 0) return null
+  try {
+    const userId = await getUserId()
+    const metrics = await db
+      .select()
+      .from(performanceMetrics)
+      .where(eq(performanceMetrics.userId, userId))
+      .orderBy(desc(performanceMetrics.createdAt))
+      .limit(100)
+    
+    if (metrics.length === 0) return null
 
-  const avgFCP = (metrics.reduce((sum, m) => sum + parseFloat(m.fcp.toString()), 0) / metrics.length).toFixed(2)
-  const avgLCP = (metrics.reduce((sum, m) => sum + parseFloat(m.lcp.toString()), 0) / metrics.length).toFixed(2)
-  const avgCLS = (metrics.reduce((sum, m) => sum + parseFloat(m.cls.toString()), 0) / metrics.length).toFixed(3)
-  const avgTTFB = (metrics.reduce((sum, m) => sum + parseFloat(m.ttfb.toString()), 0) / metrics.length).toFixed(2)
+    const avgFCP = (metrics.reduce((sum, m) => sum + parseFloat(m.fcp.toString()), 0) / metrics.length).toFixed(2)
+    const avgLCP = (metrics.reduce((sum, m) => sum + parseFloat(m.lcp.toString()), 0) / metrics.length).toFixed(2)
+    const avgCLS = (metrics.reduce((sum, m) => sum + parseFloat(m.cls.toString()), 0) / metrics.length).toFixed(3)
+    const avgTTFB = (metrics.reduce((sum, m) => sum + parseFloat(m.ttfb.toString()), 0) / metrics.length).toFixed(2)
 
-  return {
-    avgFCP,
-    avgLCP,
-    avgCLS,
-    avgTTFB,
-    recentMetrics: metrics.slice(0, 10),
+    return {
+      avgFCP,
+      avgLCP,
+      avgCLS,
+      avgTTFB,
+      recentMetrics: metrics.slice(0, 10),
+    }
+  } catch (error) {
+    // If no user session or error, return null gracefully
+    console.log('[v0] No performance metrics available:', error)
+    return null
   }
 }
 
+
+
 // Advanced Analytics - Time-span based
 export async function getAnalyticsOverview(timeSpan: TimeSpan) {
-  const userId = await getUserId()
+  let userId = 'anonymous'
+  try {
+    userId = await getUserId()
+  } catch {
+    // Use anonymous if no session
+  }
   const { startDate } = getDateRange(timeSpan)
 
+  // Get both user-specific and anonymous analytics
   const visits = await db
     .select()
     .from(siteVisits)
-    .where(and(eq(siteVisits.userId, userId), gte(siteVisits.createdAt, startDate)))
+    .where(gte(siteVisits.createdAt, startDate))
 
   const uniqueVisitors = new Set(visits.map((v) => v.sessionId)).size
   const totalViews = visits.length
@@ -207,13 +229,12 @@ export async function getAnalyticsOverview(timeSpan: TimeSpan) {
 }
 
 export async function getDeviceBreakdown(timeSpan: TimeSpan) {
-  const userId = await getUserId()
   const { startDate } = getDateRange(timeSpan)
 
   const devices = await db
     .select()
     .from(deviceAnalytics)
-    .where(and(eq(deviceAnalytics.userId, userId), gte(deviceAnalytics.createdAt, startDate)))
+    .where(gte(deviceAnalytics.createdAt, startDate))
 
   const deviceCounts: Record<string, number> = {}
   const osCounts: Record<string, number> = {}
@@ -230,13 +251,12 @@ export async function getDeviceBreakdown(timeSpan: TimeSpan) {
 }
 
 export async function getLocationBreakdown(timeSpan: TimeSpan) {
-  const userId = await getUserId()
   const { startDate } = getDateRange(timeSpan)
 
   const locations = await db
     .select()
     .from(locationAnalytics)
-    .where(and(eq(locationAnalytics.userId, userId), gte(locationAnalytics.createdAt, startDate)))
+    .where(gte(locationAnalytics.createdAt, startDate))
 
   const locationCounts: Record<string, { country?: string; region?: string; city?: string; visitors: number }> = {}
 
@@ -261,13 +281,12 @@ export async function getLocationBreakdown(timeSpan: TimeSpan) {
 }
 
 export async function getDeploymentStats(timeSpan: TimeSpan) {
-  const userId = await getUserId()
   const { startDate } = getDateRange(timeSpan)
 
   const deployments = await db
     .select()
     .from(deploymentTracking)
-    .where(and(eq(deploymentTracking.userId, userId), gte(deploymentTracking.lastSeen, startDate)))
+    .where(gte(deploymentTracking.lastSeen, startDate))
 
   return {
     deployments: deployments.map((d) => ({
@@ -280,13 +299,12 @@ export async function getDeploymentStats(timeSpan: TimeSpan) {
 }
 
 export async function getUtmPerformance(timeSpan: TimeSpan) {
-  const userId = await getUserId()
   const { startDate } = getDateRange(timeSpan)
 
   const utm = await db
     .select()
     .from(utmTracking)
-    .where(and(eq(utmTracking.userId, userId), gte(utmTracking.createdAt, startDate)))
+    .where(gte(utmTracking.createdAt, startDate))
 
   const campaignStats: Record<string, { campaign?: string; source?: string; medium?: string; visitors: number; conversions: number; revenue: number }> = {}
 
