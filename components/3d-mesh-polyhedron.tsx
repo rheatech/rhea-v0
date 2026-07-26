@@ -20,17 +20,26 @@ function Polyhedron() {
 
   const vertexShader = `
     uniform float uTime;
+    uniform vec2 uMouse;
     varying vec2 vUv;
     varying vec3 vNormal;
     varying float vPulse;
+    varying vec3 vPosition;
     
     void main() {
       vUv = uv;
       vNormal = normalize(normalMatrix * normal);
+      vPosition = position;
       
-      // Pulsing displacement
-      float pulse = sin(uTime * 1.5 + length(position)) * 0.12;
-      pulse += cos(uTime * 0.8) * 0.08;
+      // Multi-frequency pulsing
+      float pulse = sin(uTime * 1.8 + length(position)) * 0.14;
+      pulse += cos(uTime * 0.9) * 0.1;
+      pulse += sin(uTime * 2.5 + position.x) * 0.08;
+      
+      // Mouse-responsive deformation
+      pulse += cos(uMouse.x * 3.14159 + position.y) * 0.07;
+      pulse += sin(uMouse.y * 3.14159 + position.z) * 0.07;
+      
       vPulse = pulse;
       
       vec3 newPosition = position + normal * pulse;
@@ -42,28 +51,37 @@ function Polyhedron() {
     varying vec2 vUv;
     varying vec3 vNormal;
     varying float vPulse;
+    varying vec3 vPosition;
     
     void main() {
-      // Depth-based shading
+      // Complex depth shading with normals
       float depth = vNormal.z * 0.5 + 0.5;
+      float normalBright = length(vNormal) * 0.3;
+      
       vec3 baseColor = vec3(
-        0.2 + depth * 0.5,
-        0.3 + depth * 0.4,
-        0.5 + depth * 0.3
+        0.15 + depth * 0.4 + normalBright * 0.2,
+        0.25 + depth * 0.35 + normalBright * 0.15,
+        0.45 + depth * 0.25 + normalBright * 0.15
       );
       
-      // Add pulse effect
-      baseColor += vec3(vPulse * 0.3);
+      // Enhanced pulse effect
+      baseColor += vec3(vPulse * 0.5 + 0.2);
       
-      // Grid pattern overlaid
-      float grid = mod(vUv.x * 12.0, 1.0);
-      grid = smoothstep(0.0, 0.05, grid) * smoothstep(0.15, 0.1, grid);
-      grid += mod(vUv.y * 12.0, 1.0);
-      grid = smoothstep(0.0, 0.05, grid) * smoothstep(0.15, 0.1, grid);
+      // High-density grid pattern
+      float gridX = mod(vUv.x * 20.0, 1.0);
+      gridX = smoothstep(0.0, 0.04, gridX) * smoothstep(0.12, 0.08, gridX);
       
-      baseColor += grid * 0.2;
+      float gridY = mod(vUv.y * 20.0, 1.0);
+      gridY = smoothstep(0.0, 0.04, gridY) * smoothstep(0.12, 0.08, gridY);
       
-      gl_FragColor = vec4(baseColor, 0.7);
+      float grid = gridX + gridY;
+      baseColor += grid * 0.28;
+      
+      // Fresnel glow for edges
+      float fresnel = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0))), 2.5);
+      baseColor += fresnel * 0.25;
+      
+      gl_FragColor = vec4(baseColor, 0.78);
     }
   `
 
@@ -74,15 +92,25 @@ function Polyhedron() {
     }
 
     if (meshRef.current) {
-      meshRef.current.rotation.x = MathUtils.lerp(meshRef.current.rotation.x, pointer.y * 0.3, 0.08)
-      meshRef.current.rotation.y += delta * 0.04
-      meshRef.current.rotation.z = MathUtils.lerp(meshRef.current.rotation.z, pointer.x * 0.3, 0.08)
+      // Responsive rotation to mouse
+      meshRef.current.rotation.x = MathUtils.lerp(meshRef.current.rotation.x, pointer.y * 0.4, 0.1)
+      meshRef.current.rotation.y += delta * 0.06
+      meshRef.current.rotation.z = MathUtils.lerp(meshRef.current.rotation.z, pointer.x * 0.4, 0.1)
+      
+      // Scale pulse effect
+      const pulse = 1.0 + Math.sin(state.clock.elapsedTime * 0.9) * 0.025
+      meshRef.current.scale.setScalar(pulse)
+      
+      // Complex 3D floating motion
+      meshRef.current.position.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.2
+      meshRef.current.position.y = Math.cos(state.clock.elapsedTime * 0.7) * 0.25
+      meshRef.current.position.z = Math.sin(state.clock.elapsedTime * 0.3) * 0.15
     }
   })
 
   return (
     <mesh ref={meshRef}>
-      <dodecahedronGeometry args={[2, 0]} />
+      <dodecahedronGeometry args={[2.2, 2]} />
       <shaderMaterial
         ref={materialRef}
         vertexShader={vertexShader}
@@ -119,7 +147,9 @@ export function Mesh3DPolyhedron() {
         alpha: true,
       }}
     >
-      <ambientLight intensity={0.7} />
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[6, 6, 4]} intensity={0.45} />
+      <pointLight position={[-8, 3, 5]} intensity={0.35} color="#7c3aed" />
       <Polyhedron />
     </Canvas>
   )
